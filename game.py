@@ -3,6 +3,7 @@ from random import randint, randrange
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+GREEN = (0, 255, 0)
 
 #Datos de altura, ancho, fondo e icono de la ventana
 width = 800;
@@ -92,6 +93,15 @@ def drawText(surface , text, size, posX, posY):
     text_rect.midtop = (posX, posY);
     surface.blit(text_surface, text_rect);
 
+def draw_Life_Bar(surface, x, y, porcentage):
+    Bar_Lenght = 100;
+    Bar_Height = 10;
+    fill = (porcentage / 100) * Bar_Lenght;
+    Border = pygame.Rect(x, y, Bar_Lenght, Bar_Height);
+    fill = pygame.Rect(x, y, fill, Bar_Height);
+    pygame.draw.rect(surface, GREEN, fill);
+    pygame.draw.rect(surface, WHITE, Border, 2);
+
 all_meteor = pygame.sprite.Group();
 
 def survive():
@@ -105,6 +115,7 @@ def survive():
     laserSound = True;
     explosion_sound = pygame.mixer.Sound('assets/explosion.wav');
     explosionSound = True;
+
     #music = pygame.mixer.Sound('assets/music.ogg');
     score = 0;
     bestScore = 0;
@@ -211,12 +222,15 @@ def survive():
                     else:
                         explosion_sound.stop();
 
-                if x.rect.top < -50:
-                    player.ListMissile.remove(x);
+                if len(player.ListMissile) == 11:
+                    if x.rect.top < -50:
+                        player.ListMissile.remove(x);
 
         drawText(SCREEN, str(score), 30, width/2, 10);
-        drawText(SCREEN, "Life: " + str(player.Life), 20, 760, 10);
         drawText(SCREEN, "Best Score: " + str(bestScore), 20, 70, 10);
+
+        draw_Life_Bar(SCREEN, 690, 10, player.Life);
+
         pygame.display.update();
 
 survive();
